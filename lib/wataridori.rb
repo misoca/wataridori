@@ -1,4 +1,5 @@
 require "wataridori/version"
+require "wataridori/client"
 
 module Wataridori
   class Error < StandardError; end
