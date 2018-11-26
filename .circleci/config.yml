@@ -8,6 +8,7 @@ jobs:
     - run: gem install bundle
     - run: bundle install
     - run: bundle exec rspec
+    - run: bundle exec rubocop
 workflows:
   version: 2
   test:
