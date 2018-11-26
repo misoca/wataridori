@@ -22,7 +22,7 @@ RSpec.describe Wataridori::Client do
     it 'カテゴリ以下の記事を取ってきて、それぞれをpostする' do
       # 記事の取得
       allow(from_client).to receive(:posts)
-        .with(q: 'in:path/to/category', per_page: 10, include: 'comments')
+        .with(q: 'in:path/to/category', per_page: 10, include: 'comments', order: 'asc', page: 1, sort: 'created')
         .and_return(DummyResponse.new('posts' => [post1, post2]))
       # 記事の作成
       allow(to_client).to receive(:create_post)
