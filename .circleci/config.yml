@@ -1,0 +1,15 @@
+version: 2
+jobs:
+  test:
+    docker:
+    - image: circleci/ruby:2.5.3
+    steps:
+    - checkout
+    - run: gem install bundle
+    - run: bundle install
+    - run: bundle exec rspec
+workflows:
+  version: 2
+  test:
+    jobs:
+    - test
