@@ -8,8 +8,8 @@ module Wataridori
     end
 
     def self.from_teamname(token:, from:, to:)
-      new(from_client: Esa::Client.new(access_token: token, current_team: from),
-          to_client: Esa::Client.new(access_token: token, current_team: to))
+      new(from_client: Wataridori::Esa::Client.new(access_token: token, current_team: from),
+          to_client: Wataridori::Esa::Client.new(access_token: token, current_team: to))
     end
 
     def bulk_copy(category, per_page: 3)
