@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Wataridori::Client do
   DummyResponse = Struct.new(:body)
 
@@ -9,7 +11,7 @@ RSpec.describe Wataridori::Client do
       'comments' => [comment1, comment2] }
   end
   let(:post2) do
-    { 'number' => 2, 'body_md' => '## section2', 'created_by' => { 'screen_name' => 'bob'}, 'comments' => [] }
+    { 'number' => 2, 'body_md' => '## section2', 'created_by' => { 'screen_name' => 'bob' }, 'comments' => [] }
   end
   let(:comment1) { { 'body_md' => 'comment1', 'created_by' => { 'screen_name' => 'alice' } } }
   let(:comment2) { { 'body_md' => 'comment2', 'created_by' => { 'screen_name' => 'bob' } } }

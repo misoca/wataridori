@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Wataridori
   class Client
     def initialize(from_client:, to_client:)
@@ -15,13 +17,17 @@ module Wataridori
       posts.body['posts'].each do |post|
         res = to_client.create_post(post.merge('user' => post['created_by']['screen_name']))
         post_number = res.body['number']
-        post['comments'].each do |comment|
-          to_client.create_comment(post_number, 'body_md' => comment['body_md'], 'user' => comment['created_by']['screen_name'])
-        end
+        bulk_copy_comments(post, post_number)
       end.count
     end
 
     private
+
+    def bulk_copy_comments(post, post_number)
+      post['comments'].each do |comment|
+        to_client.create_comment(post_number, 'body_md' => comment['body_md'], 'user' => comment['created_by']['screen_name'])
+      end
+    end
 
     attr_reader :from_client, :to_client
   end
