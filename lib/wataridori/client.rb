@@ -1,8 +1,13 @@
 module Wataridori
   class Client
-    def initialize(token:, from:, to:)
-      @from_client = Esa::Client.new(access_token: token, current_team: from)
-      @to_client = Esa::Client.new(access_token: token, current_team: to)
+    def initialize(from_client:, to_client:)
+      @from_client = from_client
+      @to_client = to_client
+    end
+
+    def self.from_teamname(token:, from:, to:)
+      new(from_client: Esa::Client.new(access_token: token, current_team: from),
+          to_client: Esa::Client.new(access_token: token, current_team: to))
     end
 
     def bulk_copy(category, per_page: 3)
