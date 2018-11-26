@@ -13,10 +13,10 @@ module Wataridori
     def bulk_copy(category, per_page: 3)
       posts = from_client.posts(q: "in:#{category}", per_page: per_page, include: 'comments')
       posts.body['posts'].each do |post|
-        res = to_client.create_post(post.merge(user: post['created_by']['screen_name']))
+        res = to_client.create_post(post.merge('user' => post['created_by']['screen_name']))
         post_number = res.body['number']
         post['comments'].each do |comment|
-          to_client.create_comment(post_number, body_md: comment['body_md'], user: comment['created_by']['screen_name'])
+          to_client.create_comment(post_number, 'body_md' => comment['body_md'], 'user' => comment['created_by']['screen_name'])
         end
       end.count
     end
