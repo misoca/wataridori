@@ -11,14 +11,16 @@ module Wataridori
 
       private
 
+      attr_reader :original
+
       def method_missing(method_name, *args)
-        return @original.send(method_name, *args) if @original.respond_to?(method_name)
+        return original.send(method_name, *args) if original.respond_to?(method_name)
 
         super
       end
 
       def respond_to_missing?(method_name, *)
-        @original.respond_to?(method_name) || super
+        original.respond_to?(method_name) || super
       end
     end
   end
