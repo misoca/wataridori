@@ -17,7 +17,7 @@ module Wataridori
         super
       end
 
-      def respond_to_missing?(method_name)
+      def respond_to_missing?(method_name, *)
         @original.respond_to?(method_name) || super
       end
     end
