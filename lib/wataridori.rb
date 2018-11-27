@@ -3,6 +3,7 @@
 require 'wataridori/version'
 require 'wataridori/client'
 require 'wataridori/esa/client'
+require 'wataridori/esa/ratelimit'
 
 module Wataridori
   class Error < StandardError; end
