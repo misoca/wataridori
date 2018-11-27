@@ -17,6 +17,8 @@ module Wataridori
         end
       end
 
+      private
+
       def respond_to_missing?(method_name)
         @original.respond_to?(method_name)
       end
