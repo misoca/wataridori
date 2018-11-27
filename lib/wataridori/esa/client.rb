@@ -9,15 +9,13 @@ module Wataridori
         @original = ::Esa::Client.new(access_token: access_token, current_team: current_team)
       end
 
-      def method_missing(method_name, *args)
-        if @original.respond_to?(method_name)
-          @original.send(method_name, *args)
-        else
-          super
-        end
-      end
-
       private
+
+      def method_missing(method_name, *args)
+        return @original.send(method_name, *args) if @original.respond_to?(method_name)
+
+        super
+      end
 
       def respond_to_missing?(method_name)
         @original.respond_to?(method_name)
