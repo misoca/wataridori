@@ -19,11 +19,7 @@ RSpec.describe Wataridori::Client do
   subject { described_class.new(from_client: from_client, to_client: to_client) }
 
   describe '#bulk_copy' do
-    it 'カテゴリ以下の記事を取ってきて、それぞれをpostする' do
-      # 記事の取得
-      allow(from_client).to receive(:posts)
-        .with(q: 'in:path/to/category', per_page: 10, include: 'comments', order: 'asc', page: 1, sort: 'created')
-        .and_return(DummyResponse.new('posts' => [post1, post2]))
+    before do
       # 記事の作成
       allow(to_client).to receive(:create_post)
         .with(post1.merge('user' => 'alice'))
@@ -36,8 +32,34 @@ RSpec.describe Wataridori::Client do
         .with(10, 'body_md' => 'comment1', 'user' => 'alice')
       allow(to_client).to receive(:create_comment)
         .with(10, 'body_md' => 'comment2', 'user' => 'bob')
+    end
 
-      subject.bulk_copy('path/to/category', per_page: 10)
+    context 'ページネーションなし' do
+      it 'カテゴリ以下の記事を取ってきて、それぞれをpostする' do
+        # 記事の取得
+        allow(from_client).to receive(:posts)
+          .with(q: 'in:path/to/category', per_page: 10, page: 1,
+                include: 'comments', order: 'asc', sort: 'created')
+          .and_return(DummyResponse.new('posts' => [post1, post2]))
+
+        subject.bulk_copy('path/to/category', per_page: 10)
+      end
+    end
+
+    context 'ページネーションあり' do
+      it 'カテゴリ以下の記事を取ってきて、それぞれをpostする' do
+        # 記事の取得
+        allow(from_client).to receive(:posts)
+          .with(q: 'in:path/to/category', per_page: 1, page: 1,
+                include: 'comments', order: 'asc', sort: 'created')
+          .and_return(DummyResponse.new('posts' => [post1], 'next_page' => 2))
+        allow(from_client).to receive(:posts)
+          .with(q: 'in:path/to/category', per_page: 1, page: 2,
+                include: 'comments', order: 'asc', sort: 'created')
+          .and_return(DummyResponse.new('posts' => [post2]))
+
+        subject.bulk_copy('path/to/category', per_page: 1)
+      end
     end
   end
 end
