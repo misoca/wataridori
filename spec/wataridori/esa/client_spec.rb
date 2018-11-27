@@ -39,7 +39,7 @@ RSpec.describe Wataridori::Esa::Client do
 
     context '前回リクエストでのRemainingが0かつreset_atが15分後' do
       let(:ratelimit_remaining) { '0' }
-      let(:ratelimit_reset_at) { Time.now + 15 * 60 }
+      let(:ratelimit_reset_at) { (Time.now + 15 * 60).to_i.to_s }
 
       it '15分程度sleepする' do
         # 実行時に数秒の誤差が入りうるので、14分以上のsleepであることを確認する
@@ -51,7 +51,7 @@ RSpec.describe Wataridori::Esa::Client do
 
     context '前回リクエストでのRemainingが0だがreset_atは1秒前' do
       let(:ratelimit_remaining) { '0' }
-      let(:ratelimit_reset_at) { Time.now - 1 }
+      let(:ratelimit_reset_at) { (Time.now - 1).to_i.to_s }
 
       it 'sleepしない' do
         expect(subject).to receive(:sleep).with(0).and_return(0)
@@ -62,7 +62,7 @@ RSpec.describe Wataridori::Esa::Client do
 
     context '前回リクエストでのRemainingが1でreset_atは15分後' do
       let(:ratelimit_remaining) { '1' }
-      let(:ratelimit_reset_at) { Time.now + 15 * 60 }
+      let(:ratelimit_reset_at) { (Time.now + 15 * 60).to_i.to_s }
 
       it 'sleepしない' do
         expect(subject).to receive(:sleep).with(0).and_return(0)
