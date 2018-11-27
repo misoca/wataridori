@@ -44,8 +44,8 @@ RSpec.describe Wataridori::Esa::Client do
       it '15分程度sleepする' do
         # 実行時に数秒の誤差が入りうるので、14分以上のsleepであることを確認する
         expect(subject).to receive(:sleep).with(be >= 14 * 60).and_return(0)
-        expect(client).to receive(:post).and_return(response)
-        subject.post
+        expect(client).to receive(:members).and_return(response)
+        subject.members
       end
     end
 
@@ -55,8 +55,8 @@ RSpec.describe Wataridori::Esa::Client do
 
       it 'sleepしない' do
         expect(subject).to receive(:sleep).with(0).and_return(0)
-        expect(client).to receive(:post).and_return(response)
-        subject.post
+        expect(client).to receive(:members).and_return(response)
+        subject.members
       end
     end
 
@@ -66,8 +66,8 @@ RSpec.describe Wataridori::Esa::Client do
 
       it 'sleepしない' do
         expect(subject).to receive(:sleep).with(0).and_return(0)
-        expect(client).to receive(:post).and_return(response)
-        subject.post
+        expect(client).to receive(:members).and_return(response)
+        subject.members
       end
     end
   end
