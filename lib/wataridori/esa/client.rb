@@ -22,8 +22,9 @@ module Wataridori
 
       def call_original(method_name, *args)
         sleep ratelimit.second_for_next_request
-        original.send(method_name, *args).tap do |response|
+        original.send(method_name, *args).yield_self do |response|
           @ratelimit = Ratelimit.from_headers(response.headers)
+          Wataridori::Esa::Response.new(response.body)
         end
       end
 

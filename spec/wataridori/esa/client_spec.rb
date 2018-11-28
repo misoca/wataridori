@@ -8,7 +8,7 @@ RSpec.describe Wataridori::Esa::Client do
   let(:client) { ::Esa::Client.new(access_token: 'dummy_token', current_team: 'dummy_team') }
   let(:response) do
     Struct.new(:headers, :body)
-          .new({ 'X-Ratelimit-Remaining' => ratelimit_remaining, 'X-Ratelimit-Reset' => ratelimit_reset_at }, 'dummy_response')
+          .new({ 'X-Ratelimit-Remaining' => ratelimit_remaining, 'X-Ratelimit-Reset' => ratelimit_reset_at }, 'page' => 1)
   end
 
   subject do
@@ -20,7 +20,7 @@ RSpec.describe Wataridori::Esa::Client do
     context 'オリジナルのEsa::Clientに存在するメソッド' do
       it 'オリジナルを呼び出す' do
         expect(client).to receive(:posts).and_return(response)
-        expect(subject.posts.body).to eq('dummy_response')
+        expect(subject.posts.page).to eq(1)
       end
     end
 

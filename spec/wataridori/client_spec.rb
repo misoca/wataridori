@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe Wataridori::Client do
-  DummyResponse = Struct.new(:body)
-
   let(:from_client) { double }
   let(:to_client) { double }
 
@@ -23,10 +21,10 @@ RSpec.describe Wataridori::Client do
       # 記事の作成
       allow(to_client).to receive(:create_post)
         .with(post1.merge('user' => 'alice'))
-        .and_return(DummyResponse.new('number' => 10))
+        .and_return(Wataridori::Esa::Response.new('number' => 10))
       allow(to_client).to receive(:create_post)
         .with(post2.merge('user' => 'bob'))
-        .and_return(DummyResponse.new('number' => 20))
+        .and_return(Wataridori::Esa::Response.new('number' => 20))
       # コメントの作成
       allow(to_client).to receive(:create_comment)
         .with(10, 'body_md' => 'comment1', 'user' => 'alice')
@@ -40,7 +38,7 @@ RSpec.describe Wataridori::Client do
         allow(from_client).to receive(:posts)
           .with(q: 'in:path/to/category', per_page: 10, page: 1,
                 include: 'comments', order: 'asc', sort: 'created')
-          .and_return(DummyResponse.new('posts' => [post1, post2]))
+          .and_return(Wataridori::Esa::Response.new('posts' => [post1, post2]))
 
         subject.bulk_copy('path/to/category', per_page: 10)
       end
@@ -52,11 +50,11 @@ RSpec.describe Wataridori::Client do
         allow(from_client).to receive(:posts)
           .with(q: 'in:path/to/category', per_page: 1, page: 1,
                 include: 'comments', order: 'asc', sort: 'created')
-          .and_return(DummyResponse.new('posts' => [post1], 'next_page' => 2))
+          .and_return(Wataridori::Esa::Response.new('posts' => [post1], 'next_page' => 2))
         allow(from_client).to receive(:posts)
           .with(q: 'in:path/to/category', per_page: 1, page: 2,
                 include: 'comments', order: 'asc', sort: 'created')
-          .and_return(DummyResponse.new('posts' => [post2]))
+          .and_return(Wataridori::Esa::Response.new('posts' => [post2]))
 
         subject.bulk_copy('path/to/category', per_page: 1)
       end
