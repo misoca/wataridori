@@ -13,8 +13,7 @@ module Wataridori
     end
 
     def bulk_copy(category, per_page: 3)
-      posts = from_client.posts(q: "in:#{category}", per_page: per_page, include: 'comments')
-      posts.body['posts'].each do |post|
+      list_posts(category, per_page).each do |post|
         res = to_client.create_post(post.merge('user' => post['created_by']['screen_name']))
         post_number = res.body['number']
         bulk_copy_comments(post, post_number)
@@ -30,5 +29,30 @@ module Wataridori
     end
 
     attr_reader :from_client, :to_client
+
+    def list_posts(category, per_page)
+      posts = []
+      page = 1
+
+      loop do
+        res = from_client.posts(posts_params(category, page, per_page))
+        posts += res.body['posts']
+        page = res.body['next_page']
+        break unless page
+      end
+
+      posts
+    end
+
+    def posts_params(category, page, per_page)
+      {
+        q: "in:#{category}",
+        page: page,
+        per_page: per_page,
+        include: 'comments',
+        sort: 'created',
+        order: 'asc'
+      }
+    end
   end
 end
