@@ -1,35 +1,53 @@
 # Wataridori
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/wataridori`. To experiment with that code, run `bin/console` for an interactive prompt.
+Wataridori は [esa.io](https://esa.io/) のチーム間のデータマイグレーションツールです。
+コピー元のチームの特定のカテゴリ以下の記事をすべて、コピー先のチームにコピーします。
 
-TODO: Delete this and the text above, and describe your gem
+* コピーできる情報
+  * 記事タイトル・本文(画像含)・タグ
+  * 記事の作成者
+  * コメント(投稿者・本文(画像含)のみ)
+* コピーできない情報
+  * 外部への共有リンクURL
+  * リビジョン
+  * star, watch
+  * 作成/更新日時
+  * コメントの作成/更新日時・star, watch
 
-## Installation
+## セットアップ
 
-Add this line to your application's Gemfile:
+### 環境変数のセットアップ
 
-```ruby
-gem 'wataridori'
+```
+$ cp .env.sample .env
 ```
 
-And then execute:
+* `ESA_TOKEN`
+  * esa の アクセストークンを指定します。
+  * アカウントは read / write 権限の両方を持つ必要があります
+  * アカウントはコピー先チームのオーナー権限を持つ必要があります
+* `ESA_FROM_TEAM`
+  * コピー元のチームのチーム名を指定します。
+* `ESA_TO_TEAM`
+  * コピー先のチームのチーム名を指定します。
 
-    $ bundle
+## 動作確認の方法
 
-Or install it yourself as:
+コンソールを立ち上げて `client` を操作します。
 
-    $ gem install wataridori
+```
+$ bin/console
+```
 
-## Usage
+```ruby
+client.bulk_copy('path/to/category', 100) # 100 はページサイズ
+```
 
-TODO: Write usage instructions here
 
-## Development
+## テスト方法
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+RSpec でテストを実行できます。
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/wataridori.
+```
+$ bundle exec rspec
+```
