@@ -6,30 +6,39 @@ RSpec.describe Wataridori::Client do
 
   let(:post1) do
     { 'number' => 1, 'body_md' => '# section1', 'created_by' => { 'screen_name' => 'alice' },
-      'comments' => [comment1, comment2] }
+      'url' => 'https://from.esa.io/1', 'comments' => [comment1, comment2] }
   end
   let(:post2) do
-    { 'number' => 2, 'body_md' => '## section2', 'created_by' => { 'screen_name' => 'bob' }, 'comments' => [] }
+    { 'number' => 2, 'body_md' => '## section2', 'created_by' => { 'screen_name' => 'bob' },
+      'url' => 'https://from.esa.io/2', 'comments' => [] }
   end
-  let(:comment1) { { 'body_md' => 'comment1', 'created_by' => { 'screen_name' => 'alice' } } }
-  let(:comment2) { { 'body_md' => 'comment2', 'created_by' => { 'screen_name' => 'bob' } } }
+  let(:comment1) do
+    { 'body_md' => 'comment1', 'created_by' => { 'screen_name' => 'alice' },
+      'url' => 'https://from.esa.io/1#comment-3' }
+  end
+  let(:comment2) do
+    { 'body_md' => 'comment2', 'created_by' => { 'screen_name' => 'bob' },
+      'url' => 'https://from.esa.io/1#comment-4' }
+  end
 
-  subject { described_class.new(from_client: from_client, to_client: to_client) }
+  subject { described_class.new(from_client: from_client, to_client: to_client, logger: Logger.new('/dev/null')) }
 
   describe '#bulk_copy' do
     before do
       # 記事の作成
       allow(to_client).to receive(:create_post)
         .with(post1.merge('user' => 'alice'))
-        .and_return(Wataridori::Esa::Response.new('number' => 10))
+        .and_return(Wataridori::Esa::Response.new('number' => 10, 'url' => 'https://to.esa.io/10'))
       allow(to_client).to receive(:create_post)
         .with(post2.merge('user' => 'bob'))
-        .and_return(Wataridori::Esa::Response.new('number' => 20))
+        .and_return(Wataridori::Esa::Response.new('number' => 20, 'url' => 'https://to.esa.io/10'))
       # コメントの作成
       allow(to_client).to receive(:create_comment)
         .with(10, 'body_md' => 'comment1', 'user' => 'alice')
+        .and_return(Wataridori::Esa::Response.new('url' => 'https://to.esa.io/10#comment-30'))
       allow(to_client).to receive(:create_comment)
         .with(10, 'body_md' => 'comment2', 'user' => 'bob')
+        .and_return(Wataridori::Esa::Response.new('url' => 'https://to.esa.io/10#comment-40'))
     end
 
     context 'ページネーションなし' do
