@@ -31,17 +31,12 @@ module Wataridori
     attr_reader :from_client, :to_client
 
     def target_posts(category, per_page)
-      posts = []
-      page = 1
+      (1..Float::INFINITY).inject([]) do |posts, page|
+        response = from_client.posts(posts_params(category, page, per_page))
+        break posts + response.posts if response.last_page?
 
-      loop do
-        res = from_client.posts(posts_params(category, page, per_page))
-        posts += res.posts
-        page = res.next_page
-        break unless page
+        posts + response.posts
       end
-
-      posts
     end
 
     def posts_params(category, page, per_page)
