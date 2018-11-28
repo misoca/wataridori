@@ -14,17 +14,17 @@ module Wataridori
 
     def bulk_copy(category, per_page: 3)
       list_posts(category, per_page).each do |post|
-        res = to_client.create_post(post.merge('user' => post['created_by']['screen_name']))
-        post_number = res.body['number']
-        bulk_copy_comments(post, post_number)
+        to_client.create_post(post.merge('user' => post.created_by.screen_name)).tap do |response|
+          bulk_copy_comments(post, response.number)
+        end
       end.count
     end
 
     private
 
     def bulk_copy_comments(post, post_number)
-      post['comments'].each do |comment|
-        to_client.create_comment(post_number, 'body_md' => comment['body_md'], 'user' => comment['created_by']['screen_name'])
+      post.comments.each do |comment|
+        to_client.create_comment(post_number, 'body_md' => comment.body_md, 'user' => comment.created_by.screen_name)
       end
     end
 
@@ -36,8 +36,8 @@ module Wataridori
 
       loop do
         res = from_client.posts(posts_params(category, page, per_page))
-        posts += res.body['posts']
-        page = res.body['next_page']
+        posts += res.posts
+        page = res.next_page
         break unless page
       end
 
