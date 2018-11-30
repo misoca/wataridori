@@ -26,6 +26,16 @@ module Wataridori
 
     attr_reader :from_client, :to_client, :logger
 
+    def target_posts(category, per_page)
+      (1..Float::INFINITY).inject([]) do |posts, page|
+        response = from_client.posts(posts_params(category, page, per_page))
+        logger.info("copy posts: #{response.posts.map(&:number).join(',')}")
+        break posts + response.posts if response.last_page?
+
+        posts + response.posts
+      end
+    end
+
     def copy_post(post)
       to_client.create_post(post.merge('user' => post.created_by.screen_name)).tap do |created_post|
         logger.info("  post created(from #{post.url} to #{created_post.url})")
@@ -40,16 +50,6 @@ module Wataridori
         ).tap do |created_comment|
           logger.info("  comment created(from #{comment.url} to #{created_comment.url})")
         end
-      end
-    end
-
-    def target_posts(category, per_page)
-      (1..Float::INFINITY).inject([]) do |posts, page|
-        response = from_client.posts(posts_params(category, page, per_page))
-        logger.info("copy posts: #{response.posts.map(&:number).join(',')}")
-        break posts + response.posts if response.last_page?
-
-        posts + response.posts
       end
     end
 
