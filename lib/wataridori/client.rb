@@ -39,8 +39,7 @@ module Wataridori
       created_post = to_client.create_post(post.merge('user' => post.created_by.screen_name))
       logger.info("  post created(from #{post.url} to #{created_post.url})")
       bulk_copy_comments(post.comments, created_post.number)
-      { from: { number: post.number, url: post.url },
-        to: { number: created_post.number, url: created_post.url } }
+      CopyResult.create_by_posts(post, created_post)
     end
 
     def bulk_copy_comments(comments, post_number)

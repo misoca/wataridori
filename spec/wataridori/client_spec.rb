@@ -21,6 +21,19 @@ RSpec.describe Wataridori::Client do
       'url' => 'https://from.esa.io/1#comment-4' }
   end
 
+  let(:expected) do
+    [
+      Wataridori::CopyResult.create_by_hash(
+        from: { number: 1, url: 'https://from.esa.io/1' },
+        to: { number: 10, url: 'https://to.esa.io/10' }
+      ),
+      Wataridori::CopyResult.create_by_hash(
+        from: { number: 2, url: 'https://from.esa.io/2' },
+        to: { number: 20, url: 'https://to.esa.io/20' }
+      )
+    ]
+  end
+
   subject { described_class.new(from_client: from_client, to_client: to_client, logger: Logger.new('/dev/null')) }
 
   describe '#bulk_copy' do
@@ -49,11 +62,7 @@ RSpec.describe Wataridori::Client do
                 include: 'comments', order: 'asc', sort: 'created')
           .and_return(Wataridori::Esa::Response.new('posts' => [post1, post2]))
 
-        expect(subject.bulk_copy('path/to/category', per_page: 10))
-          .to eq([
-            { from: { number: 1, url: 'https://from.esa.io/1'}, to: {number: 10, url: 'https://to.esa.io/10'} },
-            { from: { number: 2, url: 'https://from.esa.io/2'}, to: {number: 20, url: 'https://to.esa.io/20'} }
-          ])
+        expect(subject.bulk_copy('path/to/category', per_page: 10)).to eq(expected)
       end
     end
 
@@ -69,11 +78,7 @@ RSpec.describe Wataridori::Client do
                 include: 'comments', order: 'asc', sort: 'created')
           .and_return(Wataridori::Esa::Response.new('posts' => [post2]))
 
-        expect(subject.bulk_copy('path/to/category', per_page: 1))
-          .to eq([
-            { from: { number: 1, url: 'https://from.esa.io/1'}, to: {number: 10, url: 'https://to.esa.io/10'} },
-            { from: { number: 2, url: 'https://from.esa.io/2'}, to: {number: 20, url: 'https://to.esa.io/20'} }
-          ])
+        expect(subject.bulk_copy('path/to/category', per_page: 1)).to eq(expected)
       end
     end
   end
