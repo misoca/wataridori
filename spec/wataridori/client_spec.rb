@@ -31,7 +31,7 @@ RSpec.describe Wataridori::Client do
         .and_return(Wataridori::Esa::Response.new('number' => 10, 'url' => 'https://to.esa.io/10'))
       allow(to_client).to receive(:create_post)
         .with(post2.merge('user' => 'bob'))
-        .and_return(Wataridori::Esa::Response.new('number' => 20, 'url' => 'https://to.esa.io/10'))
+        .and_return(Wataridori::Esa::Response.new('number' => 20, 'url' => 'https://to.esa.io/20'))
       # コメントの作成
       allow(to_client).to receive(:create_comment)
         .with(10, 'body_md' => 'comment1', 'user' => 'alice')
@@ -49,7 +49,11 @@ RSpec.describe Wataridori::Client do
                 include: 'comments', order: 'asc', sort: 'created')
           .and_return(Wataridori::Esa::Response.new('posts' => [post1, post2]))
 
-        subject.bulk_copy('path/to/category', per_page: 10)
+        expect(subject.bulk_copy('path/to/category', per_page: 10))
+          .to eq([
+            { from: { number: 1, url: 'https://from.esa.io/1'}, to: {number: 10, url: 'https://to.esa.io/10'} },
+            { from: { number: 2, url: 'https://from.esa.io/2'}, to: {number: 20, url: 'https://to.esa.io/20'} }
+          ])
       end
     end
 
@@ -65,7 +69,11 @@ RSpec.describe Wataridori::Client do
                 include: 'comments', order: 'asc', sort: 'created')
           .and_return(Wataridori::Esa::Response.new('posts' => [post2]))
 
-        subject.bulk_copy('path/to/category', per_page: 1)
+        expect(subject.bulk_copy('path/to/category', per_page: 1))
+          .to eq([
+            { from: { number: 1, url: 'https://from.esa.io/1'}, to: {number: 10, url: 'https://to.esa.io/10'} },
+            { from: { number: 2, url: 'https://from.esa.io/2'}, to: {number: 20, url: 'https://to.esa.io/20'} }
+          ])
       end
     end
   end

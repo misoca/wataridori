@@ -17,7 +17,7 @@ module Wataridori
 
     def bulk_copy(category, per_page: 3)
       logger.info("start bulk copy of category: #{category}")
-      with_posts(category, per_page) { |post| copy_post(post) }.count
+      with_posts(category, per_page) { |post| copy_post(post) }
     end
 
     private
@@ -36,10 +36,11 @@ module Wataridori
     end
 
     def copy_post(post)
-      to_client.create_post(post.merge('user' => post.created_by.screen_name)).tap do |created_post|
-        logger.info("  post created(from #{post.url} to #{created_post.url})")
-        bulk_copy_comments(post.comments, created_post.number)
-      end
+      created_post = to_client.create_post(post.merge('user' => post.created_by.screen_name))
+      logger.info("  post created(from #{post.url} to #{created_post.url})")
+      bulk_copy_comments(post.comments, created_post.number)
+      { from: { number: post.number, url: post.url },
+        to: { number: created_post.number, url: created_post.url } }
     end
 
     def bulk_copy_comments(comments, post_number)
