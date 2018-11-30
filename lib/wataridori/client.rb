@@ -17,22 +17,21 @@ module Wataridori
 
     def bulk_copy(category, per_page: 3)
       logger.info("start bulk copy of category: #{category}")
-      target_posts(category, per_page).each do |post|
-        copy_post(post)
-      end.count
+      with_posts(category, per_page) { |post| copy_post(post) }.count
     end
 
     private
 
     attr_reader :from_client, :to_client, :logger
 
-    def target_posts(category, per_page)
-      (1..Float::INFINITY).inject([]) do |posts, page|
+    def with_posts(category, per_page)
+      (1..Float::INFINITY).inject([]) do |acc, page|
         response = from_client.posts(posts_params(category, page, per_page))
         logger.info("copy posts: #{response.posts.map(&:number).join(',')}")
-        break posts + response.posts if response.last_page?
+        result = response.posts.map { |post| yield post }
+        break acc + result if response.last_page?
 
-        posts + response.posts
+        acc + result
       end
     end
 
