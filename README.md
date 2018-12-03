@@ -33,16 +33,11 @@ $ cp .env.sample .env
 
 ## 動作確認の方法
 
-コンソールを立ち上げて `client` を操作します。
+`wataridori` コマンドを実行します。引数はコピーしたいカテゴリのパスです。
 
+```shell
+$ bin/wataridori "path/to/category"
 ```
-$ bin/console
-```
-
-```ruby
-client.bulk_copy('path/to/category', 100) # 100 はページサイズ
-```
-
 
 ## テスト方法
 

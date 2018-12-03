@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'bundler/setup'
+require 'wataridori'
+require 'dotenv/load'
+
+unless ARGV.first
+  warn 'Usage: bin/wataridori "path/to/category"'
+  exit false
+end
+
+%w[ESA_TOKEN ESA_FROM_TEAM ESA_TO_TEAM].each do |key|
+  unless ENV[key]
+    warn "Error: #{key} is empty. Please set the value to .env file."
+    exit false
+  end
+end
+
+Wataridori::Client.from_teamname(
+  token: ENV['ESA_TOKEN'],
+  from: ENV['ESA_FROM_TEAM'],
+  to: ENV['ESA_TO_TEAM']
+).bulk_copy(ARGV.first)
