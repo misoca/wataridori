@@ -2,6 +2,7 @@
 
 require 'wataridori/version'
 require 'wataridori/client'
+require 'wataridori/copy_result'
 require 'wataridori/esa/client'
 require 'wataridori/esa/ratelimit'
 require 'wataridori/esa/response'
