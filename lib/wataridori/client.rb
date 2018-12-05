@@ -52,10 +52,21 @@ module Wataridori
 
     def replace_links_in_to_post(rule, to)
       logger.info("replace url of #{to.url}")
-      post = Wataridori::Post.new(to_client.post(to.number))
+      raw_post = to_client.post(to.number, include: :comments)
+      post = Wataridori::Post.new(raw_post)
       post.replace_links(rule)
       to_client.update_post(to.number, post.to_request)
       logger.info('  post replaced')
+      replace_links_in_to_comments(rule, raw_post.comments)
+    end
+
+    def replace_links_in_to_comments(rule, comments)
+      comments.each do |comment|
+        wrapped = Wataridori::Post.new(comment)
+        wrapped.replace_links(rule)
+        to_client.update_comment(comment.id, wrapped.to_request)
+        logger.info("  comment #{comment.url} replaced")
+      end
     end
 
     def bulk_copy_comments(comments, post_number)

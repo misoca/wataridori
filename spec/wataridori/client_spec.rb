@@ -88,7 +88,7 @@ RSpec.describe Wataridori::Client do
       { 'number' => 1, 'body_md' => '[link](/posts/2)',
         'body_html' => '<a href="/posts/2">link</a>',
         'created_by' => { 'screen_name' => 'alice' },
-        'url' => 'https://from.esa.io/1', 'comments' => [comment1, comment2] }
+        'url' => 'https://from.esa.io/1', 'comments' => [comment10] }
     end
     let(:post20) do
       { 'number' => 2, 'body_md' => 'no replace',
@@ -96,14 +96,22 @@ RSpec.describe Wataridori::Client do
         'created_by' => { 'screen_name' => 'bob' },
         'url' => 'https://from.esa.io/2', 'comments' => [] }
     end
+    let(:comment10) do
+      { 'id' => 111, 'body_md' => '[link](/posts/1)',
+        'body_html' => '<a href="/posts/1">link</a>',
+        'created_by' => { 'screen_name' => 'bob' },
+        'url' => 'https://from.esa.io/posts/10#comment-1' }
+    end
 
     it '各URLを置換する修正リクエストを投げる' do
       allow(to_client).to receive(:post)
-        .with(10).once.and_return(Wataridori::Esa::Response.new(post10))
+        .with(10, include: :comments).once.and_return(Wataridori::Esa::Response.new(post10))
       expect(to_client).to receive(:update_post)
         .with(10, include('body_md' => '[link](/posts/20)')).once
+      expect(to_client).to receive(:update_comment)
+        .with(111, include('body_md' => '[link](/posts/10)')).once
       allow(to_client).to receive(:post)
-        .with(20).once.and_return(Wataridori::Esa::Response.new(post20))
+        .with(20, include: :comments).once.and_return(Wataridori::Esa::Response.new(post20))
       expect(to_client).to receive(:update_post)
         .with(20, include('body_md' => 'no replace')).once
 
