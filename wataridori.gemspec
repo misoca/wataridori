@@ -32,4 +32,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rubocop'
   spec.add_dependency 'esa', '~> 1.13.1'
   spec.add_dependency 'hashie', '~> 3.6.0'
+  spec.add_dependency 'nokogiri', '~> 1.8.5'
 end
