@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'esa'
+
 module Wataridori
   module Esa
     # Esa::Clientのwrapper
