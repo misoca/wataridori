@@ -26,6 +26,12 @@ module Wataridori
       post
     end
 
+    def to_request
+      to_h.merge(
+        'user' => post.created_by.screen_name
+      )
+    end
+
     private
 
     attr_reader :post

@@ -4,9 +4,10 @@
 require 'bundler/setup'
 require 'wataridori'
 require 'dotenv/load'
+require 'yaml'
 
 unless ARGV.first
-  warn 'Usage: bin/wataridori "path/to/category"'
+  warn 'Usage: bin/wataridori "path/to/category" [path/to/copy_result.yml]'
   exit false
 end
 
@@ -17,8 +18,13 @@ end
   end
 end
 
-Wataridori::Client.from_teamname(
+client = Wataridori::Client.from_teamname(
   token: ENV['ESA_TOKEN'],
   from: ENV['ESA_FROM_TEAM'],
   to: ENV['ESA_TO_TEAM']
-).bulk_copy(ARGV.first)
+)
+
+copy_results = client.bulk_copy(ARGV.first)
+YAML.dump(copy_results.map(&:to_h), File.open(ARGV[1], 'w')) if ARGV[1]
+
+client.replace_links(copy_results)

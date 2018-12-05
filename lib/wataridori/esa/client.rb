@@ -12,6 +12,10 @@ module Wataridori
         @ratelimit = Ratelimit.no_wait
       end
 
+      def current_team
+        original.current_team
+      end
+
       private
 
       attr_reader :original, :ratelimit

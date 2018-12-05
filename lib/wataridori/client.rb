@@ -20,6 +20,14 @@ module Wataridori
       with_posts(category, per_page) { |post| copy_post(post) }
     end
 
+    def replace_links(copy_results)
+      logger.info('start replace links')
+      rule = Wataridori::LinkReplacementRule.new(from_client.current_team, to_client.current_team, copy_results)
+      copy_results.each do |result|
+        replace_links_in_to_post(rule, result.to)
+      end
+    end
+
     private
 
     attr_reader :from_client, :to_client, :logger
@@ -40,6 +48,14 @@ module Wataridori
       logger.info("  post created(from #{post.url} to #{created_post.url})")
       bulk_copy_comments(post.comments, created_post.number)
       CopyResult.create_by_posts(post, created_post)
+    end
+
+    def replace_links_in_to_post(rule, to)
+      logger.info("replace url of #{to.url}")
+      post = Wataridori::Post.new(to_client.post(to.number))
+      post.replace_links(rule)
+      to_client.update_post(to.number, post.to_request)
+      logger.info('  post replaced')
     end
 
     def bulk_copy_comments(comments, post_number)
