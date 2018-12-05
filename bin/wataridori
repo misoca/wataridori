@@ -6,10 +6,17 @@ require 'wataridori'
 require 'dotenv/load'
 require 'yaml'
 
-unless ARGV.first
-  warn 'Usage: bin/wataridori "path/to/category" [path/to/copy_result.yml]'
+def usage
+  warn <<~USAGE
+    Usage: bin/wataridori [mode]
+      bulk_copy "path/to/category" [path/to/copy_result.yml]
+      replace_links path/to/copy_result.yml [..path/to/copy_result2.yml]
+      copy_and_replace "path/to/category" [path/to/copy_result.yml]
+  USAGE
   exit false
 end
+
+usage unless ARGV.first
 
 %w[ESA_TOKEN ESA_FROM_TEAM ESA_TO_TEAM].each do |key|
   unless ENV[key]
@@ -24,7 +31,27 @@ client = Wataridori::Client.from_teamname(
   to: ENV['ESA_TO_TEAM']
 )
 
-copy_results = client.bulk_copy(ARGV.first)
-YAML.dump(copy_results.map(&:to_h), File.open(ARGV[1], 'w')) if ARGV[1]
+case ARGV[0]
+when 'bulk_copy'
+  category = ARGV[1]
+  path = ARGV[2]
+  usage if category.nil?
 
-client.replace_links(copy_results)
+  copy_results = client.bulk_copy(category)
+  YAML.dump(copy_results.map(&:to_h), File.open(path, 'w')) if path
+when 'replace_links'
+  copy_results = ARGV.slice(1..-1).inject([]) do |results, filepath|
+    results + YAML.load_file(filepath).map { |h| Wataridori::CopyResult.create_by_hash(h) }
+  end
+  usage if copy_results.length.zero?
+
+  client.replace_links(copy_results)
+when 'copy_and_replace'
+  category = ARGV[1]
+  path = ARGV[2]
+  usage if category.nil?
+
+  copy_results = client.bulk_copy(category)
+  YAML.dump(copy_results.map(&:to_h), File.open(path, 'w')) if path
+  client.replace_links(copy_results)
+end
