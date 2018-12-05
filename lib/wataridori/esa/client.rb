@@ -16,6 +16,19 @@ module Wataridori
         original.current_team
       end
 
+      def merge_user(data)
+        data.merge('user' => valid_screen_name(data.created_by.screen_name))
+      end
+
+      def merge_updated_by(data)
+        data.merge('updated_by' => valid_screen_name(data.created_by.screen_name))
+      end
+
+      def valid_screen_name(name)
+        @screen_names ||= members.members.map(&:screen_name)
+        @screen_names.member?(name) ? name : 'esa_bot'
+      end
+
       private
 
       attr_reader :original, :ratelimit

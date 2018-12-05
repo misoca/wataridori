@@ -4,6 +4,15 @@ RSpec.describe Wataridori::Client do
   let(:from_client) { double('client', current_team: 'from') }
   let(:to_client) { double('client', current_team: 'to') }
 
+  before do
+    allow(to_client).to receive(:merge_user) do |data|
+      data.merge('user' => data.created_by.screen_name)
+    end
+    allow(to_client).to receive(:merge_updated_by) do |data|
+      data.merge('updated_by' => data.created_by.screen_name)
+    end
+  end
+
   let(:post1) do
     { 'number' => 1, 'body_md' => '# section1', 'created_by' => { 'screen_name' => 'alice' },
       'url' => 'https://from.esa.io/posts/1', 'comments' => [comment1, comment2] }
@@ -47,10 +56,10 @@ RSpec.describe Wataridori::Client do
         .and_return(Wataridori::Esa::Response.new('number' => 20, 'url' => 'https://to.esa.io/posts/20'))
       # コメントの作成
       allow(to_client).to receive(:create_comment)
-        .with(10, 'body_md' => 'comment1', 'user' => 'alice')
+        .with(10, comment1.merge('user' => 'alice'))
         .and_return(Wataridori::Esa::Response.new('url' => 'https://to.esa.io/posts/10#comment-30'))
       allow(to_client).to receive(:create_comment)
-        .with(10, 'body_md' => 'comment2', 'user' => 'bob')
+        .with(10, comment2.merge('user' => 'bob'))
         .and_return(Wataridori::Esa::Response.new('url' => 'https://to.esa.io/posts/10#comment-40'))
     end
 

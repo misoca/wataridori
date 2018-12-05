@@ -44,7 +44,7 @@ module Wataridori
     end
 
     def copy_post(post)
-      created_post = to_client.create_post(post.merge('user' => post.created_by.screen_name))
+      created_post = to_client.create_post(to_client.merge_user(post))
       logger.info("  post created(from #{post.url} to #{created_post.url})")
       bulk_copy_comments(post.comments, created_post.number)
       CopyResult.create_by_posts(post, created_post)
@@ -55,7 +55,7 @@ module Wataridori
       raw_post = to_client.post(to.number, include: :comments)
       post = Wataridori::Post.new(raw_post)
       post.replace_links(rule)
-      to_client.update_post(to.number, post.to_request)
+      to_client.update_post(to.number, to_client.merge_updated_by(post.to_h))
       logger.info('  post replaced')
       replace_links_in_to_comments(rule, raw_post.comments)
     end
@@ -64,7 +64,7 @@ module Wataridori
       comments.each do |comment|
         wrapped = Wataridori::Post.new(comment)
         wrapped.replace_links(rule)
-        to_client.update_comment(comment.id, wrapped.to_request)
+        to_client.update_comment(comment.id, to_client.merge_user(wrapped.to_h))
         logger.info("  comment #{comment.url} replaced")
       end
     end
@@ -72,7 +72,7 @@ module Wataridori
     def bulk_copy_comments(comments, post_number)
       comments.each do |comment|
         to_client.create_comment(
-          post_number, 'body_md' => comment.body_md, 'user' => comment.created_by.screen_name
+          post_number, to_client.merge_user(comment)
         ).tap do |created_comment|
           logger.info("  comment created(from #{comment.url} to #{created_comment.url})")
         end
