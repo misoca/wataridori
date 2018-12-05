@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Wataridori::Post do
+RSpec.describe Wataridori::LinkReplacer do
   let(:rule) do
     Wataridori::LinkReplacementRule.new(
       'from',
@@ -15,9 +15,8 @@ RSpec.describe Wataridori::Post do
   end
 
   describe 'replace_links' do
-    let(:raw_post) { Wataridori::Esa::Response.new(number: 2, body_md: body_md, body_html: body_html) }
-    let(:post) { described_class.new(raw_post) }
-    subject { post.replace_links(rule).to_h.body_md }
+    let(:post) { Wataridori::Esa::Response.new(number: 2, body_md: body_md, body_html: body_html) }
+    subject { described_class.new(rule).replaced_body_md(post) }
 
     context '置換対象のリンクが含まれない場合' do
       let(:body_md) { '# Getting Started' }

@@ -3,13 +3,13 @@
 require 'nokogiri'
 
 module Wataridori
-  class Post
-    def initialize(post)
-      @post = post
+  class LinkReplacer
+    def initialize(rule)
+      @rule = rule
     end
 
-    def replace_links(rule)
-      post.body_md = links.inject(post.body_md) do |body_md, link|
+    def replaced_body_md(post)
+      links(post).inject(post.body_md) do |body_md, link|
         next body_md unless rule.target?(link)
 
         if rule.post_relative_link?(link)
@@ -18,19 +18,13 @@ module Wataridori
           body_md.gsub(link, rule.replaced(link))
         end
       end
-
-      self
-    end
-
-    def to_h
-      post
     end
 
     private
 
-    attr_reader :post
+    attr_reader :rule
 
-    def links
+    def links(post)
       Nokogiri::HTML.parse(post.body_html).css('a').map { |link| link['href'] }
     end
   end

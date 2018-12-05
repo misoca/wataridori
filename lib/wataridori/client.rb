@@ -52,19 +52,17 @@ module Wataridori
 
     def replace_links_in_to_post(rule, to)
       logger.info("replace url of #{to.url}")
-      raw_post = to_client.post(to.number, include: :comments)
-      post = Wataridori::Post.new(raw_post)
-      post.replace_links(rule)
-      to_client.update_post(to.number, to_client.merge_updated_by(post.to_h))
+      post = to_client.post(to.number, include: :comments)
+      replaced = post.merge('body_md' => LinkReplacer.new(rule).replaced_body_md(post))
+      to_client.update_post(to.number, to_client.merge_updated_by(replaced))
       logger.info('  post replaced')
-      replace_links_in_to_comments(rule, raw_post.comments)
+      replace_links_in_to_comments(rule, post.comments)
     end
 
     def replace_links_in_to_comments(rule, comments)
       comments.each do |comment|
-        wrapped = Wataridori::Post.new(comment)
-        wrapped.replace_links(rule)
-        to_client.update_comment(comment.id, to_client.merge_user(wrapped.to_h))
+        replaced = comment.merge('body_md' => LinkReplacer.new(rule).replaced_body_md(comment))
+        to_client.update_comment(comment.id, to_client.merge_user(replaced))
         logger.info("  comment #{comment.url} replaced")
       end
     end
