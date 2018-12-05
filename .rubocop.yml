@@ -7,3 +7,5 @@ Metrics/BlockLength:
     - spec/**/*.rb
 Style/Documentation:
   Enabled: false
+Metrics/AbcSize:
+  Max: 20

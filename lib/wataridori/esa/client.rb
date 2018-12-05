@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'esa'
+
 module Wataridori
   module Esa
     # Esa::Clientのwrapper
@@ -8,6 +10,23 @@ module Wataridori
       def initialize(access_token:, current_team:)
         @original = ::Esa::Client.new(access_token: access_token, current_team: current_team)
         @ratelimit = Ratelimit.no_wait
+      end
+
+      def current_team
+        original.current_team
+      end
+
+      def merge_user(data)
+        data.merge('user' => valid_screen_name(data.created_by.screen_name))
+      end
+
+      def merge_updated_by(data)
+        data.merge('updated_by' => valid_screen_name(data.created_by.screen_name))
+      end
+
+      def valid_screen_name(name)
+        @screen_names ||= members.members.map(&:screen_name)
+        @screen_names.member?(name) ? name : 'esa_bot'
       end
 
       private

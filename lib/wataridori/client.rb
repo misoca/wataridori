@@ -20,6 +20,14 @@ module Wataridori
       with_posts(category, per_page) { |post| copy_post(post) }
     end
 
+    def replace_links(copy_results)
+      logger.info('start replace links')
+      rule = Wataridori::LinkReplacementRule.new(from_client.current_team, to_client.current_team, copy_results)
+      copy_results.each do |result|
+        replace_links_in_to_post(rule, result.to)
+      end
+    end
+
     private
 
     attr_reader :from_client, :to_client, :logger
@@ -36,16 +44,33 @@ module Wataridori
     end
 
     def copy_post(post)
-      created_post = to_client.create_post(post.merge('user' => post.created_by.screen_name))
+      created_post = to_client.create_post(to_client.merge_user(post))
       logger.info("  post created(from #{post.url} to #{created_post.url})")
       bulk_copy_comments(post.comments, created_post.number)
       CopyResult.create_by_posts(post, created_post)
     end
 
+    def replace_links_in_to_post(rule, to)
+      logger.info("replace url of #{to.url}")
+      post = to_client.post(to.number, include: :comments)
+      replaced = post.merge('body_md' => LinkReplacer.new(rule).replaced_body_md(post))
+      to_client.update_post(to.number, to_client.merge_updated_by(replaced))
+      logger.info('  post replaced')
+      replace_links_in_to_comments(rule, post.comments)
+    end
+
+    def replace_links_in_to_comments(rule, comments)
+      comments.each do |comment|
+        replaced = comment.merge('body_md' => LinkReplacer.new(rule).replaced_body_md(comment))
+        to_client.update_comment(comment.id, to_client.merge_user(replaced))
+        logger.info("  comment #{comment.url} replaced")
+      end
+    end
+
     def bulk_copy_comments(comments, post_number)
       comments.each do |comment|
         to_client.create_comment(
-          post_number, 'body_md' => comment.body_md, 'user' => comment.created_by.screen_name
+          post_number, to_client.merge_user(comment)
         ).tap do |created_comment|
           logger.info("  comment created(from #{comment.url} to #{created_comment.url})")
         end
