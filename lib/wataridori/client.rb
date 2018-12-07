@@ -15,7 +15,7 @@ module Wataridori
           to_client: Wataridori::Esa::Client.new(access_token: token, current_team: to))
     end
 
-    def bulk_copy(category, per_page: 3)
+    def bulk_copy(category, per_page: 100)
       logger.info("start bulk copy of category: #{category}")
       with_posts(category, per_page) { |post| copy_post(post) }
     end
