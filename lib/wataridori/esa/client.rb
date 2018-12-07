@@ -26,8 +26,20 @@ module Wataridori
       end
 
       def valid_screen_name(name)
-        @screen_names ||= members.members.map(&:screen_name)
+        @screen_names ||= with_all_pages(:members, per_page: 100) do |response|
+          response.members.map(&:screen_name)
+        end
         @screen_names.member?(name) ? name : 'esa_bot'
+      end
+
+      def with_all_pages(method, params = {})
+        (1..Float::INFINITY).inject([]) do |acc, page|
+          response = send(method, params.merge(page: page))
+          result = yield response
+          break acc + result if response.last_page?
+
+          acc + result
+        end
       end
 
       private
