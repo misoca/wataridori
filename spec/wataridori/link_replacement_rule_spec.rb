@@ -37,6 +37,16 @@ RSpec.describe Wataridori::LinkReplacementRule do
       it { is_expected.to be_falsey }
     end
 
+    context '移行対象元のpath' do
+      let(:link) { 'https://from.esa.io/#path=%2FArchived' }
+      it { is_expected.to be_truthy }
+    end
+
+    context '移行対象元のquery' do
+      let(:link) { 'https://from.esa.io/posts?q=test' }
+      it { is_expected.to be_truthy }
+    end
+
     context '関係のないURL' do
       let(:link) { 'https://example.com/' }
       it { is_expected.to be_falsey }
@@ -64,6 +74,16 @@ RSpec.describe Wataridori::LinkReplacementRule do
     context '移行対象外記事の絶対パス' do
       let(:link) { 'https://from.esa.io/posts/5' }
       it { is_expected.to eq('https://from.esa.io/posts/5') }
+    end
+
+    context '移行対象元のpath' do
+      let(:link) { 'https://from.esa.io/#path=%2FArchived' }
+      it { is_expected.to eq('https://to.esa.io/#path=%2FArchived') }
+    end
+
+    context '移行対象元のquery' do
+      let(:link) { 'https://from.esa.io/posts?q=test' }
+      it { is_expected.to eq('https://to.esa.io/posts?q=test') }
     end
 
     context '関係のないURL' do

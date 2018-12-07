@@ -15,11 +15,14 @@ module Wataridori
     # URLを置換する必要があるかを返す
     def target?(link)
       return true if post_relative_link?(link)
+      return true if query_url?(link)
 
       copied_post?(link)
     end
 
     def replaced(link)
+      return link.gsub("https://#{from}.esa.io/", "https://#{to}.esa.io/") if query_url?(link)
+
       return esa_host_replaced(link) unless copied_post?(link)
 
       post_number = extract_post_number(link)
@@ -48,6 +51,11 @@ module Wataridori
       else
         summary.url
       end
+    end
+
+    def query_url?(link)
+      link.start_with?("https://#{from}.esa.io/#") ||
+        link.start_with?("https://#{from}.esa.io/posts?")
     end
 
     def esa_host_replaced(link)
