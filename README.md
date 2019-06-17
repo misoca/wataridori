@@ -59,7 +59,7 @@ URL の置き換えは行いません。
 第二引数にはコピーした結果を保存しておく YAML のパスを指定します。
 省略するとコピー結果は保存しません。
 
-### URL の置き換え(replade_links)
+### URL の置き換え(replace_links)
 
 ```shell
 $ bin/wataridori replace_links path/to/copy_result.yml [..path/to/copy_result2.yml]
@@ -76,10 +76,10 @@ bulk_copy の結果を使って、URL の置き換えを行います。
 ### 一括コピーと URL 置き換え(copy_and_replace)
 
 ```shell
-$ bin/wataridori replace_links "path/to/category" [path/to/copy_result.yml]
+$ bin/wataridori copy_and_replace "path/to/category" [path/to/copy_result.yml]
 ```
 
-bulk_copy と copy_and_replace を一度に行います。
+bulk_copy と replace_links を一度に行います。
 
 第一引数がコピーするカテゴリです。
 
