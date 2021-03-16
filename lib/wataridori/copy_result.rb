@@ -4,7 +4,7 @@ require 'hashie'
 
 module Wataridori
   CopyResult = Struct.new(:from, :to) do
-    PostSummary = Struct.new(:number, :url) do
+    PostSummary = Struct.new(:number, :url) do # rubocop:disable Lint/ConstantDefinitionInBlock
       def self.by_post(post)
         new(post.number, post.url)
       end

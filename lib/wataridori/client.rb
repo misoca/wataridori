@@ -4,7 +4,7 @@ require 'logger'
 
 module Wataridori
   class Client
-    def initialize(from_client:, to_client:, logger: Logger.new(STDOUT))
+    def initialize(from_client:, to_client:, logger: Logger.new($stdout))
       @from_client = from_client
       @to_client = to_client
       @logger = logger
@@ -32,11 +32,11 @@ module Wataridori
 
     attr_reader :from_client, :to_client, :logger
 
-    def with_posts(category, per_page)
+    def with_posts(category, per_page, &block)
       (1..Float::INFINITY).inject([]) do |acc, page|
         response = from_client.posts(posts_params(category, page, per_page))
         logger.info("copy posts: #{response.posts.map(&:number).join(',')}")
-        result = response.posts.map { |post| yield post }
+        result = response.posts.map(&block)
         break acc + result if response.last_page?
 
         acc + result
