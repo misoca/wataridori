@@ -1,6 +1,6 @@
 Style/AsciiComments:
   Enabled: false
-Metrics/LineLength:
+Layout/LineLength:
   Max: 128
 Metrics/BlockLength:
   Exclude:
