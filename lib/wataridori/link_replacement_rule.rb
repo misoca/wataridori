@@ -2,7 +2,7 @@
 
 module Wataridori
   class LinkReplacementRule
-    RELATIVE_POST_PATH = %r{^/posts/(\d+)}.freeze
+    RELATIVE_POST_PATH = %r{^/posts/(\d+)}
 
     def initialize(from, to, copy_results)
       @from = from

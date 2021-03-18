@@ -79,7 +79,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bundler (~> 2.2.14)
+  bundler (~> 2.2.3)
   dotenv
   pry
   rake (~> 13.0)
@@ -91,4 +91,4 @@ DEPENDENCIES
   wataridori!
 
 BUNDLED WITH
-   2.2.14
+   2.2.3
