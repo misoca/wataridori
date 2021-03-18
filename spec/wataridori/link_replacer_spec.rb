@@ -15,12 +15,13 @@ RSpec.describe Wataridori::LinkReplacer do
   end
 
   describe 'replace_links' do
-    let(:post) { Wataridori::Esa::Response.new(number: 2, body_md: body_md, body_html: body_html) }
     subject { described_class.new(rule).replaced_body_md(post) }
+
+    let(:post) { Wataridori::Esa::Response.new(number: 2, body_md: body_md, body_html: body_html) }
 
     context '置換対象のリンクが含まれない場合' do
       let(:body_md) { '# Getting Started' }
-      let(:body_html) { '<h1 id=\"1-0-0\" name=\"1-0-0\">\n<a class=\"anchor\" href=\"#1-0-0\"><i class=\"fa fa-link\"></i><span class=\"hidden\" data-text=\"Getting Started\"> &gt; Getting Started</span></a>Getting Started</h1>\n' } # rubocop:disable Metrics/LineLength
+      let(:body_html) { '<h1 id=\"1-0-0\" name=\"1-0-0\">\n<a class=\"anchor\" href=\"#1-0-0\"><i class=\"fa fa-link\"></i><span class=\"hidden\" data-text=\"Getting Started\"> &gt; Getting Started</span></a>Getting Started</h1>\n' } # rubocop:disable Layout/LineLength
 
       it { is_expected.to eq(body_md) }
     end

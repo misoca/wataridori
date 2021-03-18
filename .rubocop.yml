@@ -1,3 +1,10 @@
+require:
+  - rubocop-rake
+  - rubocop-rspec
+
+inherit_from:
+  - .rubocop.todo.yml
+
 Style/AsciiComments:
   Enabled: false
 Layout/LineLength:
@@ -67,3 +74,8 @@ Style/RedundantArgument: # (new in 1.4)
   Enabled: true
 Style/SwapValues: # (new in 1.1)
   Enabled: true
+
+RSpec/MultipleMemoizedHelpers:
+  Max: 10
+RSpec/ContextWording:
+  Enabled: false
