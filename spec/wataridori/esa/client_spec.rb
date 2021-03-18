@@ -3,17 +3,17 @@
 require 'esa'
 
 RSpec.describe Wataridori::Esa::Client do
+  subject do
+    allow(::Esa::Client).to receive(:new).and_return(client)
+    described_class.new(access_token: 'dummy_token', current_team: 'dummy_team')
+  end
+
   let(:ratelimit_remaining) { '1' }
   let(:ratelimit_reset_at) { '0' }
   let(:client) { ::Esa::Client.new(access_token: 'dummy_token', current_team: 'dummy_team') }
   let(:response) do
     Struct.new(:headers, :body)
           .new({ 'X-Ratelimit-Remaining' => ratelimit_remaining, 'X-Ratelimit-Reset' => ratelimit_reset_at }, 'page' => 1)
-  end
-
-  subject do
-    allow(::Esa::Client).to receive(:new).and_return(client)
-    described_class.new(access_token: 'dummy_token', current_team: 'dummy_team')
   end
 
   describe 'method_missing' do

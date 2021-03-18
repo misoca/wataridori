@@ -4,7 +4,7 @@ lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'wataridori/version'
 
-Gem::Specification.new do |spec|
+Gem::Specification.new do |spec| # rubocop:disable Metrics/BlockLength
   spec.name          = 'wataridori'
   spec.version       = Wataridori::VERSION
   spec.authors       = ['kokuyouwind']
@@ -23,13 +23,16 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_development_dependency 'bundler', '~> 1.17'
+  spec.required_ruby_version = '>= 3.0.0'
+  spec.add_development_dependency 'bundler', '~> 2.2.3'
   spec.add_development_dependency 'dotenv'
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'rb-readline'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rubocop'
+  spec.add_development_dependency 'rubocop-rake'
+  spec.add_development_dependency 'rubocop-rspec'
   spec.add_dependency 'esa', '~> 1.13.1'
   spec.add_dependency 'hashie', '~> 3.6.0'
   spec.add_dependency 'nokogiri', '~> 1.10.4'

@@ -1,0 +1,16 @@
+RSpec/VerifiedDoubles:
+  Enabled: false
+RSpec/NamedSubject:
+  Enabled: false
+RSpec/StubbedMock:
+  Enabled: false
+RSpec/MessageSpies:
+  Enabled: false
+RSpec/SubjectStub:
+  Enabled: false
+RSpec/MultipleExpectations:
+  Enabled: false
+RSpec/ExampleLength:
+  Enabled: false
+RSpec/ExpectInHook:
+  Enabled: false

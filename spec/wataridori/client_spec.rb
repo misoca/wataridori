@@ -1,18 +1,9 @@
 # frozen_string_literal: true
 
 RSpec.describe Wataridori::Client do
-  let(:from_client) { double('client', current_team: 'from') }
-  let(:to_client) { double('client', current_team: 'to') }
+  subject { described_class.new(from_client: from_client, to_client: to_client, logger: Logger.new('/dev/null')) }
 
-  before do
-    allow(to_client).to receive(:merge_user) do |data|
-      data.merge('user' => data.created_by.screen_name)
-    end
-    allow(to_client).to receive(:merge_updated_by) do |data|
-      data.merge('updated_by' => data.created_by.screen_name)
-    end
-  end
-
+  let(:from_client) { instance_double('client', current_team: 'from') }
   let(:post1) do
     { 'number' => 1, 'body_md' => '# section1', 'created_by' => { 'screen_name' => 'alice' },
       'url' => 'https://from.esa.io/posts/1', 'comments' => [comment1, comment2] }
@@ -29,7 +20,6 @@ RSpec.describe Wataridori::Client do
     { 'body_md' => 'comment2', 'created_by' => { 'screen_name' => 'bob' },
       'url' => 'https://from.esa.io/posts/1#comment-4' }
   end
-
   let(:copy_results) do
     [
       Wataridori::CopyResult.create_by_hash(
@@ -42,8 +32,16 @@ RSpec.describe Wataridori::Client do
       )
     ]
   end
+  let(:to_client) { double('client', current_team: 'to') }
 
-  subject { described_class.new(from_client: from_client, to_client: to_client, logger: Logger.new('/dev/null')) }
+  before do
+    allow(to_client).to receive(:merge_user) do |data|
+      data.merge('user' => data.created_by.screen_name)
+    end
+    allow(to_client).to receive(:merge_updated_by) do |data|
+      data.merge('updated_by' => data.created_by.screen_name)
+    end
+  end
 
   describe '#bulk_copy' do
     before do
