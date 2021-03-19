@@ -35,6 +35,6 @@ Gem::Specification.new do |spec| # rubocop:disable Metrics/BlockLength
   spec.add_development_dependency 'rubocop-rspec'
   spec.add_dependency 'esa', '~> 1.13.1'
   spec.add_dependency 'hashie', '~> 3.6.0'
-  spec.add_dependency 'nokogiri', '~> 1.10.4'
+  spec.add_dependency 'nokogiri', '>= 1.10.4', '< 1.12.0'
   spec.add_dependency 'retriable', '~> 3.1.1'
 end
