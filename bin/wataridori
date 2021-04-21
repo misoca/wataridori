@@ -41,7 +41,7 @@ when 'bulk_copy'
   YAML.dump(copy_results.map(&:to_h), File.open(path, 'w')) if path
 when 'replace_links'
   copy_results = ARGV.slice(1..-1).inject([]) do |results, filepath|
-    results + YAML.load_file(filepath).map { |h| Wataridori::CopyResult.create_by_hash(h) }
+    results + YAML.load_file(filepath).map { |h| Wataridori::CopyResult.create_by_hash(from: h[:from], to: h[:to]) }
   end
   usage if copy_results.length.zero?
 
