@@ -4,7 +4,7 @@ PATH
     wataridori (0.1.0)
       esa (~> 1.13.1)
       hashie (~> 3.6.0)
-      nokogiri (>= 1.10.4, < 1.12.0)
+      nokogiri (>= 1.10.4, < 1.13.0)
       retriable (~> 3.1.1)
 
 GEM
@@ -26,11 +26,11 @@ GEM
     hashie (3.6.0)
     method_source (1.0.0)
     mime-types (2.99.3)
-    mini_portile2 (2.5.0)
+    mini_portile2 (2.6.1)
     multi_xml (0.5.5)
     multipart-post (2.1.1)
-    nokogiri (1.11.2)
-      mini_portile2 (~> 2.5.0)
+    nokogiri (1.12.5)
+      mini_portile2 (~> 2.6.1)
       racc (~> 1.4)
     parallel (1.20.1)
     parser (3.0.0.0)
